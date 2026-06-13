@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const path = require("path");
 const express = require("express");
 const aiRoutes = require("./routes/aiRoutes");
 const db = require("./config/firebase");
@@ -8,6 +8,9 @@ const authRoutes = require("./routes/authRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const authorizeRoles = require("./middleware/roleMiddleware");
+const medicalRecordRoutes = require(
+  "./routes/medicalRecordRoutes"
+);
 const cors = require("cors");
 const app = express();
 app.use(cors());
@@ -16,6 +19,16 @@ app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/ai", aiRoutes);
+app.use(
+  "/api/medical-records",
+  medicalRecordRoutes
+);
+app.use(
+  "/uploads",
+  express.static(
+    path.join(__dirname, "uploads")
+  )
+);
 app.get("/", async (req, res) => {
   try {
     const testRef = db.collection("test").doc("connection");

@@ -9,6 +9,7 @@ const authorizeRoles = require("../middleware/roleMiddleware");
 const {
   createDoctorProfile,
   getAllDoctors,
+  getMyDoctorProfile,
   updateDoctorProfile,
   deleteDoctorProfile,
 } = require("../controllers/doctorController");
@@ -20,6 +21,12 @@ router.post(
   createDoctorProfile
 );
 router.get("/", getAllDoctors);
+router.get(
+  "/my-profile",
+  protect,
+  authorizeRoles("doctor"),
+  getMyDoctorProfile
+);
 router.put(
   "/update-profile",
   protect,

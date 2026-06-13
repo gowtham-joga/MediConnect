@@ -20,9 +20,17 @@ if (!existingDoctor.empty) {
   return res.status(400).json({
     message: "Doctor profile already exists",
   });
-}
+}   
+
+    const userDoc = await db
+  .collection("users")
+  .doc(req.user.id)
+  .get();
+
+const user = userDoc.data();
     await db.collection("doctors").add({
       userId: req.user.id,
+      name:user.name,
       specialization,
       experience,
       hospital,
@@ -96,6 +104,32 @@ const snapshot = await query.get();
   }
 };
 
+
+const getMyDoctorProfile = async (req, res) => {
+  try {
+    const doctorSnapshot = await db
+      .collection("doctors")
+      .where("userId", "==", req.user.id)
+      .get();
+
+    if (doctorSnapshot.empty) {
+      return res.status(404).json({
+        message: "Doctor profile not found",
+      });
+    }
+
+    const doctorDoc = doctorSnapshot.docs[0];
+
+    res.json({
+      id: doctorDoc.id,
+      ...doctorDoc.data(),
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send("Server Error");
+  }
+};
 const updateDoctorProfile = async (req, res) => {
   try {
     const doctorSnapshot = await db
@@ -172,6 +206,7 @@ if (!appointmentsSnapshot.empty) {
 module.exports = {
   createDoctorProfile,
   getAllDoctors,
+  getMyDoctorProfile,
   updateDoctorProfile,
   deleteDoctorProfile,
 };

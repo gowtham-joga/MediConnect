@@ -14,7 +14,12 @@ const {
   getAvailableSlots,
 } = require("../controllers/appointmentController");
 
-router.post("/book", protect, bookAppointment);
+router.post(
+  "/book",
+  protect,
+  authorizeRoles("patient"),
+  bookAppointment
+);
 router.get("/my-appointments", protect, getMyAppointments);
 router.get(
   "/doctor-appointments",
@@ -22,7 +27,7 @@ router.get(
   getDoctorAppointments
 );
 router.put(
-  "/update-status",
+  "/update-status/:id",
   protect,
   authorizeRoles("doctor"),
   updateAppointmentStatus

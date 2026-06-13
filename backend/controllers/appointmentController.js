@@ -3,6 +3,33 @@ const db = require("../config/firebase");
 const bookAppointment = async (req, res) => {
   try {
     const { doctorId, appointmentDate, appointmentTime, } = req.body;
+
+    const selectedDate = new Date(
+  appointmentDate
+);
+
+selectedDate.setHours(
+  0,
+  0,
+  0,
+  0
+);
+
+const today = new Date();
+
+today.setHours(
+  0,
+  0,
+  0,
+  0
+);
+
+if (selectedDate < today) {
+  return res.status(400).json({
+    message:
+      "Cannot book appointment for past dates",
+  });
+}
     const doctorDoc = await db
   .collection("doctors")
   .doc(doctorId)
@@ -152,7 +179,9 @@ const getDoctorAppointments = async (req, res) => {
 
 const updateAppointmentStatus = async (req, res) => {
   try {
-    const { appointmentId, status } = req.body;
+    const { status } = req.body;
+
+    const appointmentId = req.params.id;
 
     const validStatuses = [
   "pending",

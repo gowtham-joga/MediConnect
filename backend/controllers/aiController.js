@@ -11,7 +11,7 @@ const suggestDoctor = async (req, res) => {
     const { symptoms } = req.body;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
     });
 
     const prompt = `
@@ -26,9 +26,9 @@ const suggestDoctor = async (req, res) => {
 
     Only return specialist name.
     `;
-
+    console.log("Calling Gemini...");
     const result = await model.generateContent(prompt);
-
+    console.log("Response received");
     const response = result.response.text().trim();
 
     const snapshot = await db
